@@ -88,11 +88,11 @@ def GetRecordasOld(sqlStmt,ibm_db_conn ,*args):
 
 def connDb1():
     # connect  to db
-    database_username = 'DB2ADMIN'
-    database_password = 'gfhfljrc9'
-    database_hostname = '10.2.0.20'
+    database_username = 'user'
+    database_password = 'pass'
+    database_hostname = '127.0.0.0'
     database_port = '50000'
-    database_name = 'OPFR002'
+    database_name = 'dbname'
     # Construct the connection string
     connection_string = (
             f"DATABASE={database_name};"

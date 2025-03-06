@@ -85,12 +85,12 @@ def GetRecordasOld(sqlStmt,ibm_db_conn ,*args):
 
 def connDb1():
     # connect  to db
-    database_username = 'super'
-    database_password = '88888888'
+    database_username = 'user'
+    database_password = 'pass'
     #10.2.2.133
-    database_hostname = '10.2.2.204'
+    database_hostname = '127.0.0.0'
     database_port = '50000'
-    database_name = 'ASV'
+    database_name = 'DBNAME'
     # Construct the connection string
     connection_string = (
             f"DATABASE={database_name};"
@@ -298,7 +298,7 @@ def ProcessFile(src_file,logs_file):
 
             csvFile = csv.DictReader(input_file, fieldnames=col_names, delimiter=';')
 
-            sqlStmtUpd = 'update DB2ADMIN.SVR_DUBL_RAZN set newrec=0'
+            sqlStmtUpd = 'update DBNAME.SVR_DUBL_RAZN set newrec=0'
 
             # // Отметим  все звписи  как старые
             if not GetRecordasOld(sqlStmtUpd,ibm_db_conn):
@@ -312,7 +312,7 @@ def ProcessFile(src_file,logs_file):
                 uuid = str(row["UUID"])
                 fo_num = str(row["FO_NUM"])
                 # // Проверка uuid + fo_num
-                sqlStmtCheck = 'SELECT * FROM DB2ADMIN.SVR_DUBL_RAZN WHERE  UUID=? and FO_NUM=?'
+                sqlStmtCheck = 'SELECT * FROM DBNAME.SVR_DUBL_RAZN WHERE  UUID=? and FO_NUM=?'
                 rows = isRecordNewCheck(sqlStmtCheck, ibm_db_conn, uuid, fo_num)
                 pens = row['PENS']
                 inn = str(row["INN"]).zfill(10)
@@ -334,7 +334,7 @@ def ProcessFile(src_file,logs_file):
                 if rows > 0:
                     notload = notload + 1
                     returnCode = False
-                    sqlStatement = ("update DB2ADMIN.SVR_DUBL_RAZN set NEWREC=1, PENS=?, INN=?, KPP=?, FIO=?, SOVMEST=?, PRIZNAK_KS=?, R_DATE=?,  GRAGD = ?,"
+                    sqlStatement = ("update DBNAME.SVR_DUBL_RAZN set NEWREC=1, PENS=?, INN=?, KPP=?, FIO=?, SOVMEST=?, PRIZNAK_KS=?, R_DATE=?,  GRAGD = ?,"
                                             "VID_KM = ?, DAT_SPIS = ?  where UUID=? and FO_NUM=?")
                     if not SqlStmt(sqlStatement, ibm_db_conn, pens, inn,kpp,fio,sovmest,priznak_ks,r_date,gragd,vid_km,dat_spis,uuid,fo_num):
                         message = f"{datetime.now()} - Can't run  sql stmt update, uuid: {uuid} - fo_num:  {fo_num} - № row {j}"
@@ -404,7 +404,7 @@ def ProcessFile(src_file,logs_file):
                     dat_load = date.today()
                     newrec = 1
 
-                    sqlStatement = """INSERT INTO DB2ADMIN.SVR_DUBL_RAZN (DPTCOD, ENTNMB, INN, KPP, SNILSCS, FIO, R_DATE, GRAGD, PENS,
+                    sqlStatement = """INSERT INTO DBNAME.SVR_DUBL_RAZN (DPTCOD, ENTNMB, INN, KPP, SNILSCS, FIO, R_DATE, GRAGD, PENS,
                     ENTNMB_ZA, NAME_ORG, DAT_MEROPR,VID_KM, MEROPR, DOLG_NAME, KOD_OKZ, UVOLN_REASON, NAME_DOC, DAT_DOC,
                     NUM_DOC, SOVMEST, PRIZNAK_KS, UUID, FO_NUM, FO_DAT_TXT, DAT_SPIS, INSNMB, ACTUAL_ENTNMB, ACTUAL_DPTCOD,
                     N_SPIS , IN_UVED, NEWREC,NSPIS,ENTNMB_C)  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?,?,?,?,?,?)"""
@@ -423,18 +423,18 @@ def ProcessFile(src_file,logs_file):
             logging.info(message)
             print(message)
 
-            sqlStatement = """update DB2ADMIN.SVR_DUBL_RAZN set RES=null where newrec=1 and RES=6"""
+            sqlStatement = """update DBNAME.SVR_DUBL_RAZN set RES=null where newrec=1 and RES=6"""
             #if not SqlStmt(sqlStatement,ibm_db_conn)
-            #    message = f"{datetime.now()} - Can't run sql stmt:update DB2ADMIN.SVR_DUBL_RAZN set RES=null where newrec=1 and RES=6"
+            #    message = f"{datetime.now()} - Can't run sql stmt:update DBNAME.SVR_DUBL_RAZN set RES=null where newrec=1 and RES=6"
             #    logging.info(message)
             #    return
             #message = f"{datetime.now()} - 'update set RES=null where newrec=1 and RES=6' finished"
             #logging.info(message)
             #print(message)
 
-            sqlStatement = """update DB2ADMIN.SVR_DUBL_RAZN set RES=6 where newrec=0"""
+            sqlStatement = """update DBNAME.SVR_DUBL_RAZN set RES=6 where newrec=0"""
             #if not SqlStmt(sqlStatement,ibm_db_conn)
-            #    message = f"{datetime.now()} - Can't run sql stmt:update DB2ADMIN.SVR_DUBL_RAZN set RES=6 where newrec=0"
+            #    message = f"{datetime.now()} - Can't run sql stmt:update DBNAME.SVR_DUBL_RAZN set RES=6 where newrec=0"
             #    logging.info(message)
             #    return
             #message = f"{datetime.now()} - update 'set RES=6 where newrec=0' finished"
